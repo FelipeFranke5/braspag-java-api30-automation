@@ -67,3 +67,9 @@ chamar a sua única função pública: **run**. O resultado (caso a automação 
 - 1º parâmetro: Nome de Usuário
 - 2º parâmetro: Senha
 - 3º parâmetro: Número do Estabelecimento Cielo (EC)
+
+## Sobre a versão do Selenium
+
+Este projeto foi criado levando em consideração que será executado em um ambiente virtual Docker contendo
+uma instalação do Chromium, por isso no arquivo pom.xml existe a dependência **selenium-devtools-v136**, para "dar match"
+com a versão que é instalada no projeto original.
