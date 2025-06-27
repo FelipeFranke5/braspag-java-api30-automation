@@ -19,8 +19,11 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class AutomationRunnerImpl implements AutomationRunner {
+
+    private static final Logger LOG = Logger.getLogger(AutomationRunnerImpl.class.getName());
 
     private static final String BRASPAG_ENTRYPOINT = "https://admin.braspag.com.br/Admin/Home";
     private static final String BRASPAG_SEARCH_ESTABLISHMENTS_PAGE = "https://admin.braspag.com.br/EcommerceCielo/List";
@@ -44,51 +47,77 @@ public class AutomationRunnerImpl implements AutomationRunner {
 
     @Override
     public CieloMerchant run() {
+        LOG.info("[MAIN-RUN] Running automation");
         try {
             performLogin();
             searchForEc();
             getData();
             return cieloMerchant;
         } catch (Exception exception) {
+            LOG.warning("[MAIN-RUN] Got an error: " + exception.getMessage());
+            LOG.warning("[MAIN-RUN] Throwing ExecutionException");
             throw new ExecutionException(exception.getMessage());
         } finally {
+            LOG.info("[MAIN-RUN] Quitting the WebDriver");
+            quitDriver();
+            LOG.info("[MAIN-RUN] Finishing execution");
+        }
+    }
+
+    private void quitDriver() {
+        try {
+            LOG.info("[QUIT-DRIVER] Attempting to quit driver");
             webDriver.quit();
+            LOG.info("[QUIT-DRIVER] Driver quit");
+        } catch (Exception exception) {
+            LOG.warning("[QUIT-DRIVER] Error while quitting driver! Message: " + exception.getMessage());
         }
     }
 
     private void setUpDriver() {
+        LOG.info("[INITIALIZATION] Starting to setup ChromeOptions..");
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--headless");
         chromeOptions.addArguments("--disable-gpu");
         chromeOptions.addArguments("--no-sandbox");
         webDriver = new ChromeDriver(chromeOptions);
         webDriver.manage().timeouts().implicitlyWait(Duration.ofMinutes(MAX_WAITING_MINUTES_BEFORE_TIMEOUT));
+        LOG.info("[INITIALIZATION] ChromeOptions and WebDriver defined!");
     }
 
     private void checkTitle() {
+        LOG.info("[CHECK-TITLE] Checking if title is valid..");
         String title = webDriver.getTitle();
         checkTitleIsNullOrBlank(title);
         checkTitleIsInternalError(title);
+        LOG.info("[CHECK-TITLE] Checked. Title is valid!");
     }
 
     private void performLogin() throws InterruptedException {
+        LOG.info("[PERFORM-LOGIN] Starting to perform Login operation");
         goToBraspagLoginPage();
         sendUsernameKeys();
         sendPasswordKeys();
         clickEnter();
+        LOG.info("[PERFORM-LOGIN] Login operation performed!");
     }
 
     private void searchForEc() throws InterruptedException {
+        LOG.info("[EC-SEARCH] Starting to perform EC search");
+        LOG.info("[EC-SEARCH] NUMBER: " + establishmentCode.establishmentNumber());
         goToSearchMerchantsPage();
         fillMerchantEstablishmentCode();
         clearStartDate();
         clickSearchButton();
         checkEstablishment();
         clickEstablishmentLink();
+        LOG.info("[EC-SEARCH] EC search performed!");
     }
 
     private void getData() {
+        LOG.info("[GET-DATA] Starting to go into the Merchant details page");
         defineMerchantData();
+        LOG.info("[GET-DATA] Merchant Data is defined and available!");
     }
 
     private void goToBraspagLoginPage() {
