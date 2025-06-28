@@ -6,7 +6,7 @@
 
     <groupId>dev.franke.felipe</groupId>
     <artifactId>api30_automation</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -14,14 +14,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <selenium.version>4.33.0</selenium.version>
     </properties>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub FelipeFranke5 Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/FelipeFranke5/braspag-java-api30-automation</url>
-        </repository>
-    </distributionManagement>
 
     <dependencies>
         <dependency>
